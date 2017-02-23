@@ -18,12 +18,12 @@ public class Application {
 
     @Test
     public void test01() {
-        assertEquals(app.executeQuery01(), 6.989999999999999, 1E-10); // TODO Werte
+        assertEquals(app.executeQuery01(), 6.989999999999999, 1E-10);
     }
 
     @Test
     public void test02() {
-        assertEquals(app.executeQuery02(), 8.99, 1E-10); // TODO Werte
+        assertEquals(app.executeQuery02(), 8.99, 1E-10);
     }
 
     @Test
