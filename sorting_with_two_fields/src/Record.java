@@ -1,88 +1,31 @@
 public class Record {
+    private String category;
+    private int subCategory;
 
-    private int id;
-    private String movie;
-    private int week;
-    private char rowID;
-    private int seat;
-    private double price;
-    private char customerType;
-
-    public Record(int id, String movie, int week, char rowID, int seat, double price, char customerType) {
-        this.id = id;
-        this.movie = movie;
-        this.week = week;
-        this.rowID = rowID;
-        this.seat = seat;
-        this.price = price;
-        this.customerType = customerType;
+    public Record(String category,int subCategory) {
+        this. category = category;
+        this.subCategory = subCategory;
     }
 
-    public int getId() {
-        return id;
+    public String getCategory() {
+        return category;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setCategory(String category) {
+        this.category = category;
     }
 
-    public String getMovie() {
-        return movie;
+    public int getSubCategory() {
+        return subCategory;
     }
 
-    public void setMovie(String movie) {
-        this.movie = movie;
-    }
-
-    public int getWeek() {
-        return week;
-    }
-
-    public void setWeek(int week) {
-        this.week = week;
-    }
-
-    public char getRowID() {
-        return rowID;
-    }
-
-    public void setRowID(char rowID) {
-        this.rowID = rowID;
-    }
-
-    public int getSeat() {
-        return seat;
-    }
-
-    public void setSeat(int seat) {
-        this.seat = seat;
-    }
-
-    public double getPrice() {
-        return price;
-    }
-
-    public void setPrice(double price) {
-        this.price = price;
-    }
-
-    public char getCustomerType() {
-        return customerType;
-    }
-
-    public void setCustomerType(char customerType) {
-        this.customerType = customerType;
+    public void setSubCategory(int subCategory) {
+        this.subCategory = subCategory;
     }
 
     public String toString() {
         StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append("ID: ").append(id).append(", ");
-        stringBuilder.append("Movie: ").append(movie).append(", ");
-        stringBuilder.append("Week: ").append(week).append(", ");
-        stringBuilder.append("Row: ").append(rowID).append(", ");
-        stringBuilder.append("Seat: ").append(seat).append(", ");
-        stringBuilder.append("Price: ").append(price).append(", ");
-        stringBuilder.append("Customer Type: ").append(customerType);
+        stringBuilder.append(category).append(",").append(subCategory);
         return stringBuilder.toString();
     }
 }

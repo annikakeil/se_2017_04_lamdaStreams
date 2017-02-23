@@ -47,7 +47,7 @@ public class Application implements IApplication {
         records.stream().forEach(System.out::println);
     }
 
-    public void executeQuery01() {
+    public double executeQuery01() {
         // aggregation - average
         // SELECT AVG(price) FROM data WHERE movie IN ('M1','M3') AND customerType = 'B'
         System.out.println("--- query01");
@@ -58,9 +58,12 @@ public class Application implements IApplication {
         double avg = records.stream().filter(filterPredicate1).filter(filterPredicate2).mapToDouble((r) -> r.getPrice()).average().getAsDouble();
 
         System.out.println(avg);
+
+        System.out.println();
+        return avg;
     }
 
-    public void executeQuery02() {
+    public double executeQuery02() {
         // aggregation - max
         // SELECT MAX(price) FROM data WHERE (customerType = 'A')
         System.out.println("--- query02");
@@ -71,20 +74,27 @@ public class Application implements IApplication {
         double max = records.stream().filter(filterPredicate).max(comparator).get().getPrice();
 
         System.out.println("Maximum: " + max);
+        System.out.println();
+
+        return max;
     }
 
-    public void executeQuery03() {
+    public List<Record> executeQuery03() {
         // sort
         // SELECT * FROM data ORDER by customerType
         System.out.println("--- query03");
 
         Comparator<Record> comparator = (r1, r2) -> Character.compare(r1.getCustomerType(), r2.getCustomerType());
-        records.stream().sorted(comparator).forEach(System.out::println);
+        List<Record> result = records.stream().sorted(comparator).collect(Collectors.toList());
+
+        result.stream().forEach(System.out::println);
 
         System.out.println();
+
+        return result;
     }
 
-    public void executeQuery04() {
+    public List<String> executeQuery04() {
         // sort
         // SELECT movie,week,price,customerType FROM data ORDER BY movie ASC,week DESC
         System.out.println("--- query04");
@@ -92,12 +102,20 @@ public class Application implements IApplication {
         Comparator<Record> comparator1 = (r1, r2) -> r1.getMovie().compareTo(r2.getMovie());
         Comparator<Record> comparator2 = (r1, r2) -> Integer.compare(r1.getWeek(), r2.getWeek());
 
-        records.stream().sorted(comparator1).sorted(comparator2.reversed())
-                .forEach((r) -> System.out.println("Movie: " + r.getMovie() + ", Week: " + r.getWeek() + ", Price: " + r.getPrice() + ", Constumer Type: " + r.getCustomerType()));
+        List<String> result = records.stream().sorted(comparator1)
+                .sorted(comparator2.reversed())
+                .map( (r) -> "Movie: " + r.getMovie() + ", Week: " + r.getWeek() + ", Price: " + r.getPrice() + ", Constumer Type: " + r.getCustomerType())
+                .collect(Collectors.toList());
+
+        //.forEach((r) -> System.out.println("Movie: " + r.getMovie() + ", Week: " + r.getWeek() + ", Price: " + r.getPrice() + ", Constumer Type: " + r.getCustomerType()));
+
+        result.stream().forEach(System.out::println);
+
         System.out.println();
+        return result;
     }
 
-    public void executeQuery05() {
+    public List<String> executeQuery05() {
         // filter
         // SELECT movie,week,price,rowID,seat FROM data WHERE (rowID = 'A' AND seat >= 10 AND seat <= 15)
         System.out.println("--- query05");
@@ -106,28 +124,36 @@ public class Application implements IApplication {
         Predicate<Record> filterPredicate2 = record -> record.getSeat() >= 10;
         Predicate<Record> filterPredicate3 = record -> record.getSeat() <= 15;
 
-        records.stream().filter(filterPredicate1).filter(filterPredicate2).filter(filterPredicate3)
-                .forEach((r) -> System.out.println("Movie: " + r.getMovie() + ", Week: " + r.getWeek() + ", Price: " + r.getPrice() + ", Row: " + r.getRowID() + ", Seat: " + r.getSeat()));
+        List<String> result = records.stream().filter(filterPredicate1).filter(filterPredicate2).filter(filterPredicate3)
+                .map((r) -> "Movie: " + r.getMovie() + ", Week: " + r.getWeek() + ", Price: " + r.getPrice() + ", Row: " + r.getRowID() + ", Seat: " + r.getSeat())
+                .collect(Collectors.toList());
 
+        result.stream().forEach(System.out::println);
         System.out.println();
+
+        return result;
     }
 
-    public void executeQuery06() {
+    public List<String> executeQuery06() {
         // filter and sort
         // SELECT movie,week,price FROM data WHERE (customerType = 'A') ORDER BY price DESC
         System.out.println("--- query06");
 
         Predicate<Record> filterPredicate = record -> record.getCustomerType() == 'A';
         Comparator<Record> comparator = (r1, r2) -> Double.compare(r1.getPrice(), r2.getPrice());
-        records.stream()
+        List<String> result = records.stream()
                 .filter(filterPredicate)
                 .sorted(comparator)
-                .forEach((r) -> System.out.println("Movie: " + r.getMovie() + ", Week: " + r.getWeek() + ", Price: " + r.getPrice()));
+                .map((r) -> "Movie: " + r.getMovie() + ", Week: " + r.getWeek() + ", Price: " + r.getPrice())
+                .collect(Collectors.toList());
 
+        result.stream().forEach(System.out::println);
         System.out.println();
+
+        return result;
     }
 
-    public void executeQuery07() {
+    public List<String> executeQuery07() {
         // filter, sort and limit
         // SELECT movie,week,price FROM data WHERE (movie = 'M1') ORDER BY price DESC LIMIT 3
         System.out.println("--- query07");
@@ -135,33 +161,44 @@ public class Application implements IApplication {
         Predicate<Record> filterPredicate = record -> record.getMovie() == "M1";
         Comparator<Record> comparator = (r1, r2) -> Double.compare(r1.getPrice(), r2.getPrice());
 
-        records.stream().filter(filterPredicate).sorted(comparator.reversed()).limit(3)
-                .forEach((r) -> System.out.println("Movie: " + r.getMovie() + ", Week: " + r.getWeek() + ", Price: " + r.getPrice()));
+        List<String> result = records.stream().filter(filterPredicate).sorted(comparator.reversed()).limit(3)
+                .map((r) -> "Movie: " + r.getMovie() + ", Week: " + r.getWeek() + ", Price: " + r.getPrice())
+                .collect(Collectors.toList());
 
+        result.stream().forEach(System.out::println);
         System.out.println();
+
+        return result;
     }
 
-    public void executeQuery08() {
+    public long executeQuery08() {
         // aggregation - count
         //SELECT COUNT(*) FROM data WHERE (movie IN ('M1','M2'))
         System.out.println("--- query08");
 
         Predicate<Record> filterPredicate = (r) -> Arrays.asList("M1", "M2").contains(r.getMovie());
-        System.out.println(records.stream().filter(filterPredicate).count());
+
+        long result = records.stream().filter(filterPredicate).count();
+
+        System.out.println(result + "\n");
+        return result;
     }
 
-    public void executeQuery09() {
+    public List<String> executeQuery09() {
         // aggregation - group
         // SELECT customerType,COUNT(*) FROM data GROUP BY customerType
         System.out.println("--- query09");
 
-        records.stream().collect(Collectors.groupingBy((r) -> r.getCustomerType()))
-                .entrySet().forEach(e -> System.out.println(e.getKey() + " " + e.getValue().size()));
+        List<String> result = records.stream().collect(Collectors.groupingBy((r) -> r.getCustomerType()))
+                .entrySet().stream().map(e -> e.getKey() + " " + e.getValue().size()).collect(Collectors.toList());
 
+        result.stream().forEach(System.out::println);
         System.out.println();
+
+        return result;
     }
 
-    public void executeQuery10() {
+    public List<String> executeQuery10() {
         // aggregation - group and filter
         // SELECT customerType,COUNT(*) FROM data WHERE (week >=1 AND week <= 3) GROUP BY customerType
         System.out.println("--- query10");
@@ -169,9 +206,13 @@ public class Application implements IApplication {
         Predicate<Record> filterPredicateG = record -> record.getWeek() >= 1;
         Predicate<Record> filterPredicateS = record -> record.getWeek() <= 3;
 
-        records.stream().filter(filterPredicateG).filter(filterPredicateS)
+        List<String> result = records.stream().filter(filterPredicateG).filter(filterPredicateS)
                 .collect(Collectors.groupingBy((r) -> r.getCustomerType()))
-                .entrySet().forEach(e -> System.out.println(e.getKey() + " " + e.getValue().size()));
+                .entrySet().stream().map(e -> e.getKey() + " " + e.getValue().size()).collect(Collectors.toList());
+
+        result.stream().forEach(System.out::println);
+
+        return result;
     }
 
     public static void main(String... args) {
