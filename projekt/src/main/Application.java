@@ -155,7 +155,8 @@ public class Application implements IApplication {
         // SELECT customerType,COUNT(*) FROM data GROUP BY customerType
         System.out.println("--- query09");
 
-        // TODO
+        records.stream().collect(Collectors.groupingBy((r) -> r.getCustomerType()))
+                .entrySet().forEach(e -> System.out.println(e.getKey() + " " + e.getValue().size()));
 
         System.out.println();
     }
@@ -165,9 +166,12 @@ public class Application implements IApplication {
         // SELECT customerType,COUNT(*) FROM data WHERE (week >=1 AND week <= 3) GROUP BY customerType
         System.out.println("--- query10");
 
-        // TODO
+        Predicate<Record> filterPredicateG = record -> record.getWeek() >= 1;
+        Predicate<Record> filterPredicateS = record -> record.getWeek() <= 3;
 
-        System.out.println();
+        records.stream().filter(filterPredicateG).filter(filterPredicateS)
+                .collect(Collectors.groupingBy((r) -> r.getCustomerType()))
+                .entrySet().forEach(e -> System.out.println(e.getKey() + " " + e.getValue().size()));
     }
 
     public static void main(String... args) {

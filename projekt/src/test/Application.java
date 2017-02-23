@@ -4,16 +4,9 @@ import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 
 public class Application {
-    // demo
-    public boolean isPrime(int n) {
-        if (n % 2 == 0)
-            return false;
+    
+    public void setup() {
 
-        for (int i = 3;i * i <=n;i+= 2)
-            if (n % i == 0)
-                return false;
-
-        return true;
     }
 
     @Test
