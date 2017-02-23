@@ -1,13 +1,14 @@
 package main;
 
+import com.sun.org.apache.regexp.internal.RE;
+
+import java.text.CharacterIterator;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 public class Application implements IApplication {
     private List<Record> records;
@@ -26,7 +27,7 @@ public class Application implements IApplication {
         Record record09 = new Record(9,"M1",3,'B',5,8.99,'B');
         Record record10 = new Record(10,"M2",4,'C',18,5.99,'C');
 		
-        records = Arrays.asList(record01, record02, record03, record04, record05, record06, record07, record09, record10);
+        records = Arrays.asList(record01, record02, record03, record04, record05, record06, record07, record08, record09, record10);
     }
 
     public long convertDateStringToUnixSeconds(String dateString) {
@@ -47,22 +48,23 @@ public class Application implements IApplication {
     }
 
     public void executeQuery01() {
+        // aggregation - average
+        // SELECT AVG(price) FROM data WHERE movie IN ('M1','M3') AND customerType = 'B'
         System.out.println("--- query01");
-        System.out.println();
+
+        Predicate<Record> filterPredicate1 = (r) -> r.getCustomerType() == 'B';
+        Predicate<Record> filterPredicate2 = (r) -> Arrays.asList("M1", "M2").contains(r.getMovie());
+
+        double avg = records.stream().filter(filterPredicate1).filter(filterPredicate2).mapToDouble((r) -> r.getPrice()).average().getAsDouble();
+
+        System.out.println(avg);
     }
 
     public void executeQuery02() {
+        // aggregation - max
+        // SELECT MAX(price) FROM data WHERE (customerType = 'A')
         System.out.println("--- query02");
-        /*
-        double max = 0;
-        for (Record r : records) {
-            if (r.getCustomerType() == 'A'){
-                if (r.getPrice() > max){
-                    max = r.getPrice();
-                }
-            }
-        }
-        */
+
         Predicate<Record> filterPredicate = record -> record.getCustomerType() == 'A';
         Comparator<Record> comparator = (r1, r2) -> Double.compare(r1.getPrice(), r2.getPrice());
 
@@ -72,42 +74,99 @@ public class Application implements IApplication {
     }
 
     public void executeQuery03() {
+        // sort
+        // SELECT * FROM data ORDER by customerType
         System.out.println("--- query03");
+
+        Comparator<Record> comparator = (r1, r2) -> Character.compare(r1.getCustomerType(), r2.getCustomerType());
+        records.stream().sorted(comparator).forEach(System.out::println);
+
         System.out.println();
     }
 
     public void executeQuery04() {
+        // sort
+        // SELECT movie,week,price,customerType FROM data ORDER BY movie ASC,week DESC
         System.out.println("--- query04");
+
+        Comparator<Record> comparator1 = (r1, r2) -> r1.getMovie().compareTo(r2.getMovie());
+        Comparator<Record> comparator2 = (r1, r2) -> Integer.compare(r1.getWeek(), r2.getWeek());
+
+        records.stream().sorted(comparator1).sorted(comparator2.reversed())
+                .forEach((r) -> System.out.println("Movie: " + r.getMovie() + ", Week: " + r.getWeek() + ", Price: " + r.getPrice() + ", Constumer Type: " + r.getCustomerType()));
         System.out.println();
     }
 
     public void executeQuery05() {
+        // filter
+        // SELECT movie,week,price,rowID,seat FROM data WHERE (rowID = 'A' AND seat >= 10 AND seat <= 15)
         System.out.println("--- query05");
+
+        Predicate<Record> filterPredicate1 = record -> record.getRowID() == 'A';
+        Predicate<Record> filterPredicate2 = record -> record.getSeat() >= 10;
+        Predicate<Record> filterPredicate3 = record -> record.getSeat() <= 15;
+
+        records.stream().filter(filterPredicate1).filter(filterPredicate2).filter(filterPredicate3)
+                .forEach((r) -> System.out.println("Movie: " + r.getMovie() + ", Week: " + r.getWeek() + ", Price: " + r.getPrice() + ", Row: " + r.getRowID() + ", Seat: " + r.getSeat()));
+
         System.out.println();
     }
 
     public void executeQuery06() {
+        // filter and sort
+        // SELECT movie,week,price FROM data WHERE (customerType = 'A') ORDER BY price DESC
         System.out.println("--- query06");
+
+        Predicate<Record> filterPredicate = record -> record.getCustomerType() == 'A';
+        Comparator<Record> comparator = (r1, r2) -> Double.compare(r1.getPrice(), r2.getPrice());
+        records.stream()
+                .filter(filterPredicate)
+                .sorted(comparator)
+                .forEach((r) -> System.out.println("Movie: " + r.getMovie() + ", Week: " + r.getWeek() + ", Price: " + r.getPrice()));
+
         System.out.println();
     }
 
     public void executeQuery07() {
+        // filter, sort and limit
+        // SELECT movie,week,price FROM data WHERE (movie = 'M1') ORDER BY price DESC LIMIT 3
         System.out.println("--- query07");
+
+        Predicate<Record> filterPredicate = record -> record.getMovie() == "M1";
+        Comparator<Record> comparator = (r1, r2) -> Double.compare(r1.getPrice(), r2.getPrice());
+
+        records.stream().filter(filterPredicate).sorted(comparator.reversed()).limit(3)
+                .forEach((r) -> System.out.println("Movie: " + r.getMovie() + ", Week: " + r.getWeek() + ", Price: " + r.getPrice()));
+
         System.out.println();
     }
 
     public void executeQuery08() {
+        // aggregation - count
+        //SELECT COUNT(*) FROM data WHERE (movie IN ('M1','M2'))
         System.out.println("--- query08");
-        System.out.println();
+
+        Predicate<Record> filterPredicate = (r) -> Arrays.asList("M1", "M2").contains(r.getMovie());
+        System.out.println(records.stream().filter(filterPredicate).count());
     }
 
     public void executeQuery09() {
+        // aggregation - group
+        // SELECT customerType,COUNT(*) FROM data GROUP BY customerType
         System.out.println("--- query09");
+
+        // TODO
+
         System.out.println();
     }
 
     public void executeQuery10() {
+        // aggregation - group and filter
+        // SELECT customerType,COUNT(*) FROM data WHERE (week >=1 AND week <= 3) GROUP BY customerType
         System.out.println("--- query10");
+
+        // TODO
+
         System.out.println();
     }
 
