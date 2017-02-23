@@ -1,0 +1,29 @@
+// aggregation - average
+SELECT AVG(price) FROM data WHERE movie IN ('M1','M3') AND customerType = 'B'
+
+// aggregation - max
+SELECT MAX(price) FROM data WHERE (customerType = 'A')
+
+// sort
+SELECT * FROM data ORDER by customerType
+
+// sort
+SELECT movie,week,price,customerType FROM data ORDER BY movie ASC,week DESC
+
+// filter
+SELECT movie,week,price,rowID,seat FROM data WHERE (rowID = 'A' AND seat >= 10 AND seat <= 15)
+
+// filter and sort
+SELECT movie,week,price FROM data WHERE (customerType = 'A') ORDER BY price DESC
+
+// filter, sort and limit
+SELECT movie,week,price FROM data WHERE (movie = 'M1') ORDER BY price DESC LIMIT 3
+
+// aggregation - count
+SELECT COUNT(*) FROM data WHERE (movie IN ('M1','M2'))
+
+// aggregation - group
+SELECT customerType,COUNT(*) FROM data GROUP BY customerType
+
+// aggregation - group and filter
+SELECT customerType,COUNT(*) FROM data WHERE (week >=1 AND week <= 3) GROUP BY customerType
