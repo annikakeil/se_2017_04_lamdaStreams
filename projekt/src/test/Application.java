@@ -12,10 +12,6 @@ public class Application {
 
     public main.Application app = new main.Application();
 
-    public void setup() {
-
-    }
-
     @Test
     public void test01() {
         assertEquals(app.executeQuery01(), 6.989999999999999, 1E-10);
